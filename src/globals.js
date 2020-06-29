@@ -8,10 +8,17 @@ class GlobalVars {
         return this._githubApiUrl;
     }
 
+    set githubApiUrl(value) {
+        this._githubApiUrl = value;
+    }
+
     get backendUrl() {
         return this._backendUrl;
     }
-}
 
-export const globals = new GlobalVars();
+    set backendUrl(value) {
+        this._backendUrl = value;
+    }
+}
+export default GlobalVars;
 

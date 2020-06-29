@@ -1,23 +1,59 @@
 <template>
-    <div class="columns">
-        <div class="column is-narrow-desktop">
-            <div class="box">
-                <p class="title is-5">Narrow column</p>
-                <p class="subtitle">This column is only 200px wide.</p>
-            </div>
-        </div>
-        <div class="column">
-            <div class="box">
-                <p class="title is-5">Flexible column</p>
-                <p class="subtitle">This column will take up the remaining space available.</p>
-            </div>
-        </div>
-    </div>
+    <b-tabs>
+        <b-tab-item label="Table">
+            <b-table
+                    :data="pullrequests"
+                    :columns="columns"
+                    :checked-rows.sync="pullRequestsSelected"
+                    checkable
+                    :paginated="true"
+                    :per-page="5"
+                    :current-page.sync="currentPage"
+                    :pagination-simple="true"
+            >
+
+            </b-table>
+
+        </b-tab-item>
+        <b-tab-item label="Checked rows">
+            <pre>{{ pullRequestsSelected }}</pre>
+        </b-tab-item>
+    </b-tabs>
 </template>
 
 <script>
     export default {
-        name: "PullRequestListPage"
+        name: "PullRequestListPage",
+        components: {
+
+        },
+        data() {
+
+            return {
+                pullrequests: [],
+                pullRequestsSelected: [],
+                currentPage: 1,
+                columns: [
+                    {field: 'title', label: 'Title',},
+                    {field: 'body', label: 'Description',},
+                ]
+            }
+        },
+        methods: {
+            loadRepositoryPullRequests() {
+                this.axios.get(this.$globals.githubApiUrl + `repos/${this.$route.params.handle}/${this.$route.params.repo}/pulls`)
+                    .then((response) => {
+                        this.pullrequests = response.data;
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                    })
+            }
+        },
+        mounted(){
+            this.loadRepositoryPullRequests();
+        }
+
     }
 </script>
 

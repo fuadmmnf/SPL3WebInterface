@@ -44,7 +44,7 @@
         name: "LandingPage",
         data() {
             return {
-                repoUrl: ''
+                repoUrl: 'https://github.com/elastic/elasticsearch'
             };
         },
         methods:{
