@@ -8,7 +8,7 @@ export const router = new VueRouter({
         {
             path: '/',
             name: 'landingPage',
-            component: () => import('@/pages/Landing'),
+            component: () => import('@/pages/Home'),
         },
     ],
     scrollBehavior () {
