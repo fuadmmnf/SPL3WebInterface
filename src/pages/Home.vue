@@ -13,14 +13,14 @@
                 style="width: 400px"
             >
               <template v-slot:before>
-                <q-icon name="code"/>
+                <q-icon class="q-mt-sm" name="code"/>
               </template>
 
               <template v-slot:append>
                 <q-btn round dense flat icon="clear" @click="files = null"/>
               </template>
             </q-file>
-            <q-btn class="col-2 q-ma-md" unelevated color="primary" label="proceed" @click="detectFileSimilarity"/>
+            <q-btn class="col-2 q-ma-md" unelevated color="primary" label="proceed" @click="readAllFiles"/>
           </div>
         </q-card-section>
       </q-card>
@@ -62,23 +62,36 @@ export default {
     }
   },
   methods: {
-    detectFileSimilarity() {
+    detectFileSimilarity(){
+     axios.post(`${process.env.VUE_APP_BACKEND_API}/check/duplicates`, {files: this.sourceCodes})
+        .then((response) => {
+          if (response.status === 200) {
+            this.results = response.data;
+          }
+        });
+    },
+    readAllFiles() {
       this.sourceCodes = [];
-      this.files.forEach(file => {
+      let fileCount = this.files.length;
+      this.files.forEach((file) => {
         let reader = new FileReader();
         reader.onloadend = () => {
-          this.sourceCodes.push(reader.result);
+          this.sourceCodes.push(
+              {
+                name: file.name,
+                content: reader.result
+              }
+          );
+
+          if(this.sourceCodes.length === fileCount){
+            console.log('aise ekhane');
+            this.detectFileSimilarity();
+          }
         };
         reader.readAsText(file);
       });
 
-
-      axios.post('', {contents: this.sourceCodes})
-          .then((response) => {
-            if (response.status === 200) {
-              this.results = response.data;
-            }
-          })
+     
 
     }
   }
