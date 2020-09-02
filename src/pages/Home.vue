@@ -28,47 +28,45 @@
 
     </div>
 
-    <div v-if="isLoading || results.length" class="row justify-center q-ma-md">
-      <q-card class="my-card" style="width: 45%; height: 50%">
-        <q-card-section class="row justify-center">
-          <div v-if="isLoading">
-            <q-circular-progress
-                indeterminate
-                size="50px"
-                :thickness="0.22"
-                color="blue"
-                track-color="grey-3"
-                class="q-ma-md"
-            />
-          </div>
-          <div v-else>
-
-          </div>
-        </q-card-section>
-      </q-card>
+    <div  v-if="requestSubmitted || results.length">
+          <clone-table :loading="isLoading" :data="results"/>
     </div>
   </div>
 </template>
 <script>
 import axios from 'axios';
 
+import cloneTable from "@/components/cloneTable";
+
 export default {
+  components: {
+    'clone-table': cloneTable
+  },
   data() {
     return {
       isLoading: true,
+      requestSubmitted: false,
       files: null,
       sourceCodes: [],
       results: []
     }
   },
   methods: {
-    detectFileSimilarity(){
-     axios.post(`${process.env.VUE_APP_BACKEND_API}/check/duplicates`, {files: this.sourceCodes})
-        .then((response) => {
-          if (response.status === 200) {
-            this.results = response.data;
-          }
-        });
+    detectFileSimilarity() {
+      this.requestSubmitted = true;
+      axios.post(`${process.env.VUE_APP_BACKEND_API}/check/duplicates`, {files: this.sourceCodes})
+          .then((response) => {
+            if (response.status === 200) {
+              this.sourceCodes = [];
+              this.results = response.data.data;
+              this.isLoading = false;
+              this.requestSubmitted = false;
+            }
+          })
+          .catch((e) => {
+            this.requestSubmitted = false;
+            console.error(e);
+          });
     },
     readAllFiles() {
       this.sourceCodes = [];
@@ -83,7 +81,7 @@ export default {
               }
           );
 
-          if(this.sourceCodes.length === fileCount){
+          if (this.sourceCodes.length === fileCount) {
             console.log('aise ekhane');
             this.detectFileSimilarity();
           }
@@ -91,7 +89,6 @@ export default {
         reader.readAsText(file);
       });
 
-     
 
     }
   }
