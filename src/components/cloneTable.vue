@@ -35,7 +35,7 @@ export default {
         { name: 'method1', align: 'left', label: 'Method-1', field: row => row.file1_method.name + "(line: " + row.file1_method.line_number + ")",  sortable: true },
         // { name: 'file1', align: 'left', label: 'File-1', field: 'file1', sortable: true },
         { name: 'method2', align: 'left', label: 'Method-2', field: row => row.file2_method.name + "(line: " + row.file2_method.line_number + ")",  sortable: true },
-        { name: 'clone_prob', align: 'left', label: 'Clone Probability', field: row => row.probability.split('"').join(''), sortable: true },
+        // { name: 'probabilities', align: 'left', label: 'Clone Probability', field: row => row.probability.split('"').join(''), sortable: true },
         { name: 'type', align: 'left', label: 'Clone Type', field: 'type'},
       ],
     }
