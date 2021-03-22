@@ -10,9 +10,8 @@ export default {
     },
     mutations: {
         loggedIn(state, user) {
-            if (user.token) {
-                localStorage.setItem('doctorUser', JSON.stringify(user));
-                localStorage.setItem('lastDeviceRegistered', user.mobile);
+            if (user) {
+                localStorage.setItem('user', JSON.stringify(user));
                 state.user = user;
             }
         },
