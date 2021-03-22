@@ -36,14 +36,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('auth', ['getUser'])
+    ...mapGetters('auth', ['getUser']),
+    ...mapGetters('db', ['getDB'])
   },
   mounted() {
 
   },
   methods: {
     ...mapMutations('auth', ['loggedIn', 'loggedOut']),
-    ...mapMutations('db', ['updateUser']),
     signInWithGmail() {
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then((result) => {
@@ -51,8 +51,7 @@ export default {
         if (uid && displayName && email && photoURL) {
           const userInfo = { uid, displayName, email, photoURL }
           this.loggedIn(userInfo)
-          this.updateUser(userInfo)
-
+          this.getDB.collection('users').doc(userInfo.uid).set(userInfo)
           this.$router.replace('detector').catch(() => {});
 
         }

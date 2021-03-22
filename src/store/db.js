@@ -21,9 +21,6 @@ export default {
         },
     },
     mutations: {
-        updateUser(state, user) {
-            state.db.collection('users').doc(user.uid).set(user)
-        }
     },
     actions: {},
 };

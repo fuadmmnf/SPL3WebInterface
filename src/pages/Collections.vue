@@ -5,7 +5,7 @@
           grid
           grid-header
           title="Treats"
-          :data="data"
+          :data="usercollections"
           :columns="columns"
           row-key="name"
           :filter="filter"
@@ -17,7 +17,7 @@
               icon-right="archive"
               label="Add Collection"
               no-caps
-              @click="createNewCollection"
+              @click="createCollection(collectionForm)"
           />
         </template>
 
@@ -27,11 +27,20 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: "Collections",
   data() {
     return {
       filter: '',
+      usercollections: [],
+      collectionForm: {
+        name: '',
+        description: '',
+        owner: null,
+        trialCount: 0
+      },
       columns: [
         {
           name: 'desc',
@@ -45,75 +54,37 @@ export default {
         { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
         { name: 'carbs', label: 'Carbs (g)', field: 'carbs' }
       ],
-      data: [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65
-        }
-      ]
+      data: []
     }
   },
+  computed: {
+    ...mapGetters('auth', ['getUser']),
+    ...mapGetters('db', ['getDB'])
+  },
+  mounted() {
+    this.collectionForm.owner = this.getUser
+    this.getDB.collection('usercollections').doc(this.getUser.uid).get()
+        .then((datasnapshot) => {
+          this.usercollections = datasnapshot.data()['collections']
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+  },
   methods: {
-    createNewCollection(){
+    createCollection() {
+      this.getDB.collection('collections').doc().set(this.collectionForm)
+          .then((result) => {
+            this.getDB.collection('usercollections').doc(this.getUser.uid).set({
+                  user_uid: this.getUser.uid,
+                  collections: [...this.usercollections, { id: result.id, ...this.collectionForm }]
+                }
+            )
+          })
 
     }
   }
+
 
 }
 </script>
