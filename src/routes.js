@@ -8,7 +8,20 @@ export const router = new VueRouter({
         {
             path: '/',
             name: 'landingPage',
-            component: () => import('@/pages/Home'),
+            redirect: 'detector',
+            component: () => import('@/layouts/default'),
+            children: [
+                {
+                    path: 'detector',
+                    name: 'detectorPage',
+                    component: () => import('@/pages/Detector'),
+                },
+            ]
+        },
+        {
+            path: '/login',
+            name: 'authPage',
+            component: () => import('@/pages/Login'),
         },
     ],
     scrollBehavior () {
