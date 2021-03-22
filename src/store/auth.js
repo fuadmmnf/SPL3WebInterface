@@ -16,7 +16,7 @@ export default {
             }
         },
         loggedOut(state) {
-            localStorage.removeItem('doctorUser');
+            localStorage.removeItem('user');
             state.user = null;
         },
     },
