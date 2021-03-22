@@ -1,7 +1,7 @@
 export default {
     namespaced: true,
     state: {
-        user: JSON.parse(localStorage.getItem('doctorUser')),
+        user: JSON.parse(localStorage.getItem('user')),
     },
     getters: {
         getUser(state) {

@@ -16,15 +16,20 @@ export const router = new VueRouter({
                     name: 'detectorPage',
                     component: () => import('@/pages/Detector'),
                 },
+                {
+                    path: 'collections',
+                    name: 'collectionsPage',
+                    component: () => import('@/pages/Collections'),
+                },
             ]
         },
-        {
-            path: '/login',
-            name: 'authPage',
-            component: () => import('@/pages/Login'),
-        },
+        // {
+        //     path: '/login',
+        //     name: 'authPage',
+        //     component: () => import('@/pages/Login'),
+        // },
     ],
-    scrollBehavior () {
+    scrollBehavior() {
         return { x: 0, y: 0 }
     }
 });
