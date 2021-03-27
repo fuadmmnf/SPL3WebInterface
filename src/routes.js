@@ -19,7 +19,7 @@ export const router = new VueRouter({
                 {
                     path: 'collections',
                     name: 'collectionsPage',
-                    component: () => import('@/pages/Collections'),
+                    component: () => import('@/pages/collections/index'),
                 },
             ]
         },
