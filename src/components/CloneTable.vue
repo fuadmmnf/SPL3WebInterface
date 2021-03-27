@@ -17,7 +17,7 @@
 
 <script>
 export default {
-  name: "cloneTable",
+  name: "CloneTable",
   props: ['data', 'loading'],
   data() {
     return {

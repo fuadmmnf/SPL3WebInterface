@@ -4,23 +4,23 @@
       <div class="col q-px-sm">
         <q-card class="my-card">
           <q-card-section>
-            <div class="text-h6">asa</div>
-            <div class="text-subtitle2">ewf</div>
+            <div class="text-h6">{{ collection.name }}</div>
+            <div class="text-subtitle2">{{ collection.description }}</div>
           </q-card-section>
 
-          <q-tabs v-model="tab" class="text-teal" align="justify">
-            <q-tab label="Trials" name="trials" />
+          <q-tabs v-model="leftTab" class="text-teal" align="justify">
+            <q-tab label="History" name="history" />
             <q-tab label="Users" name="users" />
           </q-tabs>
 
           <q-separator />
 
-          <q-tab-panels v-model="tab" animated>
-            <q-tab-panel name="one">
+          <q-tab-panels v-model="leftTab" animated>
+            <q-tab-panel name="history">
               The QCard component is a great way to display important pieces of grouped content.
             </q-tab-panel>
 
-            <q-tab-panel name="two">
+            <q-tab-panel name="users">
               With so much content to display at once, and often so little screen real-estate,
               Cards have fast become the design pattern of choice for many companies, including
               the likes of Google and Twitter.
@@ -31,7 +31,7 @@
       <div class="col q-px-sm">
         <q-card>
           <q-tabs
-              v-model="tab"
+              v-model="rightTab"
               dense
               class="text-grey"
               active-color="primary"
@@ -39,21 +39,20 @@
               align="justify"
               narrow-indicator
           >
-            <q-tab name="mails" label="Mails" />
-            <q-tab name="alarms" label="Alarms" />
+            <q-tab name="trials" label="Trials" />
+            <q-tab name="statistics" label="Statistics" />
             <q-tab name="movies" label="Movies" />
           </q-tabs>
 
           <q-separator />
 
-          <q-tab-panels v-model="tab" animated>
-            <q-tab-panel name="mails">
-              <div class="text-h6">Mails</div>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          <q-tab-panels v-model="rightTab" animated>
+            <q-tab-panel name="trials">
+              <collection-trial />
             </q-tab-panel>
 
-            <q-tab-panel name="alarms">
-              <div class="text-h6">Alarms</div>
+            <q-tab-panel name="statistics">
+              <div class="text-h6">Statistics</div>
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
             </q-tab-panel>
 
@@ -69,21 +68,41 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
+import CollectionTrial from "../components/collection/CollectionTrial";
+
 export default {
   name: "CollectionDetails",
+  components: { CollectionTrial },
   data() {
-    return {}
+    return {
+      leftTab: 'history',
+      rightTab: 'trials',
+      collection: {
+        doc_id: '',
+        name: '',
+        description: '',
+        owner: null,
+        trialCount: 0
+      }
+    }
   },
   computed: {
     ...mapGetters('db', ['getDB'])
   },
-  mounted(){
+  mounted() {
     this.fetchCollection()
   },
   methods: {
-    fetchCollection(){
-
+    fetchCollection() {
+      this.getDB.collection('collections').doc(this.$route.params.collection_id).get()
+          .then((res) => {
+            this.collection = res.data()
+            this.collection.doc_id = res.id
+          })
+          .catch((e) => {
+            alert(e)
+          })
     }
   }
 }

@@ -29,7 +29,7 @@
     </div>
 
     <div  v-if="requestSubmitted || results.length">
-          <clone-table :loading="isLoading" :data="results"/>
+      <clone-table :loading="isLoading" :data="results"/>
     </div>
   </div>
 </template>
@@ -39,6 +39,7 @@ import axios from 'axios';
 import CloneTable from "@/components/CloneTable";
 
 export default {
+  name: 'CollectionTrial',
   components: {
     'clone-table': CloneTable
   },
