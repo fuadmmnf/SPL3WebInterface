@@ -10,6 +10,7 @@
           row-key="doc_id"
           :filter="filter"
           hide-header
+          @row-click="(evt, row, index) => $router.push({name: 'collectionDetailsPage', params: {collection_id: row.doc_id}})"
       >
         <template v-slot:top-right>
           <q-btn
@@ -77,14 +78,13 @@ export default {
         {
           name: 'desc',
           required: true,
-          label: 'Dessert (100g serving)',
+          label: 'Collection Name',
           align: 'left',
-          field: row => row.name,
+          field: 'name',
           sortable: true
         },
-        { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-        { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' }
+        { name: 'Description', align: 'center', label: 'Description', field: 'description', sortable: true },
+        { name: 'Owner', label: 'Owner', field: val => val.owner.displayName + ' (' + val.owner.email + ')', sortable: true },
       ],
       data: []
     }

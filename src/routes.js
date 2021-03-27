@@ -19,7 +19,12 @@ export const router = new VueRouter({
                 {
                     path: 'collections',
                     name: 'collectionsPage',
-                    component: () => import('@/pages/collections/index'),
+                    component: () => import('@/pages/Collections'),
+                },
+                {
+                    path: 'collections/:collection_id',
+                    name: 'collectionDetailsPage',
+                    component: () => import('@/pages/CollectionDetails'),
                 },
             ]
         },
