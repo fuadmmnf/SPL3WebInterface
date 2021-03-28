@@ -111,7 +111,7 @@ export default {
     fetchCollectionTrials() {
       this.getDB.collection('collections').doc(this.$route.params.collection_id).collection('trials').get()
           .then((querySnapshot) => {
-            this.collectionTrials = querySnapshot.map((doc) => { return { doc_id: doc.id, ...doc.data() }})
+            this.collectionTrials = !querySnapshot.docs.length? []: querySnapshot.docs.map((doc) => { return { doc_id: doc.id, ...doc.data() }})
           })
           .catch((e) => {
             alert(e)

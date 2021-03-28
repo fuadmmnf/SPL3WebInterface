@@ -89,7 +89,7 @@ export default {
   name: "TrialHistory",
   props: {
     trials: {
-      type: Object,
+      type: Array,
       required: true
     }
   },
