@@ -1,9 +1,9 @@
 <template>
   <q-table
-      title="Treats"
-      :data="data"
+      title="Recent Trials"
+      :data="trials"
       :columns="columns"
-      row-key="name"
+      row-key="doc_id"
       :expanded.sync="expanded"
   >
 
@@ -42,13 +42,58 @@
       </q-tr>
     </template>
 
+    <template v-slot:loading>
+      <q-inner-loading showing color="primary" />
+    </template>
+
+
+    <template v-slot:body-cell-method1="props">
+      <q-td :props="props">
+        <div>
+          <q-badge color="secondary" class="text-bold" :label="props.row.file1_method.name" />
+        </div>
+        <div class="my-table-details">
+          {{ `${props.row.file1} (line: ${props.row.file1_method.line_number})` }}
+        </div>
+      </q-td>
+    </template>
+
+    <template v-slot:body-cell-method2="props">
+      <q-td :props="props">
+        <div>
+          <q-badge outline color="secondary" class="text-bold" :label="props.row.file2_method.name" />
+        </div>
+        <div class="my-table-details">
+          {{ `${props.row.file2} (line: ${props.row.file2_method.line_number})` }}
+        </div>
+      </q-td>
+    </template>
+
+
+    <template v-slot:body-cell-type="props">
+      <q-td :props="props">
+        <div>
+          <q-badge color="secondary" class="text-bold" :label="props.row.type.name" />
+        </div>
+        <div class="my-table-details">
+          {{ props.row.type.probability.slice(0, 5) }}
+        </div>
+      </q-td>
+    </template>
+
   </q-table>
 </template>
 
 <script>
 export default {
-name: "TrialHistory",
-  data () {
+  name: "TrialHistory",
+  props: {
+    trials: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
     return {
       expanded: [ // Array of row keys
         'Ice cream sandwich'
@@ -56,46 +101,28 @@ name: "TrialHistory",
 
       columns: [
         {
-          name: 'desc',
+          name: 'method1',
           required: true,
-          label: 'Dessert (100g serving)',
-          align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
-          sortable: true
-        },
-        { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-        { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true, style: 'width: 10px' },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-        { name: 'protein', label: 'Protein (g)', field: 'protein' },
-        { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-        {
-          name: 'calcium',
-          label: 'Calcium (%)',
-          field: 'calcium',
-          sortable: true,
-          sort: (a, b) => parseInt(a, 10) - parseInt(b, 10)
+          label: 'Method 1',
+          align: 'center',
+          field: row => row,
         },
         {
-          name: 'iron',
-          label: 'Iron (%)',
-          field: 'iron',
-          sortable: true,
-          sort: (a, b) => parseInt(a, 10) - parseInt(b, 10)
-        }
+          name: 'method2',
+          required: true,
+          label: 'Method 2',
+          align: 'center',
+          field: row => row,
+        },
+        // { name: 'file1', align: 'left', label: 'File-1', field: 'file1', sortable: true },
+        // { name: 'method1', align: 'left', label: 'Method-1', field: row => row.file1_method.name + "(line: " + row.file1_method.line_number + ")",  sortable: true },
+        // { name: 'file1', align: 'left', label: 'File-1', field: 'file1', sortable: true },
+        // { name: 'method2', align: 'left', label: 'Method-2', field: row => row.file2_method.name + "(line: " + row.file2_method.line_number + ")",  sortable: true },
+        // { name: 'probabilities', align: 'left', label: 'Clone Probability', field: row => row.probability.split('"').join(''), sortable: true },
+        { name: 'type', align: 'center', label: 'Clone Type', field: row => row, },
+        { name: 'user', align: 'center', label: 'User', field: row => row.user.displayName },
       ],
-      data: [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%'
-        },
-      ]
+
     }
   }
 }

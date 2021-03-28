@@ -57,6 +57,7 @@
             />
 
             <q-btn
+                flat
                 :disable="!results.length"
                 color="primary"
                 icon-right="archive"
@@ -90,16 +91,6 @@
             </q-td>
           </template>
 
-          <template v-slot:body-cell-method2="props">
-            <q-td :props="props">
-              <div>
-                <q-badge color="secondary" class="text-bold" :label="props.row.file2_method.name" />
-              </div>
-              <div class="my-table-details">
-                {{ `${props.row.file2} (line: ${props.row.file2_method.line_number})` }}
-              </div>
-            </q-td>
-          </template>
 
 
           <template v-slot:body-cell-type="props">

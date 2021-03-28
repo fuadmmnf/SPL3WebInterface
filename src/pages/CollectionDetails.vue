@@ -15,9 +15,9 @@
 
           <q-separator />
 
-          <q-tab-panels v-model="leftTab" animated>
+          <q-tab-panels v-model="leftTab" keep-alive animated>
             <q-tab-panel name="history">
-              <trial-history />
+              <trial-history :trials="collectionTrials" />
             </q-tab-panel>
 
             <q-tab-panel name="users">
@@ -85,7 +85,8 @@ export default {
         description: '',
         owner: null,
         trialCount: 0
-      }
+      },
+      collectionTrials: [],
     }
   },
   computed: {
@@ -93,7 +94,7 @@ export default {
   },
   mounted() {
     this.fetchCollection()
-    this.$root.$on('trial-saved', this.fetchCollection)
+    this.$root.$on('trial-saved', this.fetchCollectionTrials)
   },
   methods: {
     fetchCollection() {
@@ -101,6 +102,16 @@ export default {
           .then((res) => {
             this.collection = res.data()
             this.collection.doc_id = res.id
+            this.fetchCollectionTrials()
+          })
+          .catch((e) => {
+            alert(e)
+          })
+    },
+    fetchCollectionTrials() {
+      this.getDB.collection('collections').doc(this.$route.params.collection_id).collection('trials').get()
+          .then((querySnapshot) => {
+            this.collectionTrials = querySnapshot.map((doc) => { return { doc_id: doc.id, ...doc.data() }})
           })
           .catch((e) => {
             alert(e)
