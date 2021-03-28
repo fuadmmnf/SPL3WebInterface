@@ -62,6 +62,7 @@ const returnCollectionFormTemplate = () => {
     name: '',
     description: '',
     owner: null,
+    users: [],
     trialCount: 0
   }
 }

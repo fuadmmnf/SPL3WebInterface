@@ -211,8 +211,11 @@ export default {
           .collection('trials')
 
       this.results.forEach((trial) => {
-        batch.set(collectionRef.doc(), {
+        const docRef = collectionRef.doc()
+        batch.set(docRef, {
+          doc_id: docRef.id,
           user: this.getUser,
+          status: 'Unresolved',
           ...trial
         })
       })

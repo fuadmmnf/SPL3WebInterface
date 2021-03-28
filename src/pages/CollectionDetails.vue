@@ -21,9 +21,7 @@
             </q-tab-panel>
 
             <q-tab-panel name="users">
-              With so much content to display at once, and often so little screen real-estate,
-              Cards have fast become the design pattern of choice for many companies, including
-              the likes of Google and Twitter.
+              <collection-users :collection-users="[collection.owner, ...collection.users]" />
             </q-tab-panel>
           </q-tab-panels>
         </q-card>
@@ -41,7 +39,7 @@
           >
             <q-tab name="trials" label="Trials" />
             <q-tab name="statistics" label="Statistics" />
-            <q-tab name="movies" label="Movies" />
+            <q-tab name="mentions" label="Mentions" />
           </q-tabs>
 
           <q-separator />
@@ -56,8 +54,8 @@
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
             </q-tab-panel>
 
-            <q-tab-panel name="movies">
-              <div class="text-h6">Movies</div>
+            <q-tab-panel name="mentions">
+              <div class="text-h6">Mentions</div>
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
             </q-tab-panel>
           </q-tab-panels>
@@ -71,10 +69,11 @@
 import { mapGetters } from 'vuex'
 import CollectionTrial from "../components/collection/CollectionTrial";
 import TrialHistory from "../components/collection/TrialHistory";
+import CollectionUsers from "../components/collection/CollectionUsers";
 
 export default {
   name: "CollectionDetails",
-  components: { TrialHistory, CollectionTrial },
+  components: { CollectionUsers, TrialHistory, CollectionTrial },
   data() {
     return {
       leftTab: 'history',
@@ -84,6 +83,7 @@ export default {
         name: '',
         description: '',
         owner: null,
+        users: [],
         trialCount: 0
       },
       collectionTrials: [],
