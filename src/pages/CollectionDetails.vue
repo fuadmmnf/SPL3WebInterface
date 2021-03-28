@@ -17,7 +17,7 @@
 
           <q-tab-panels v-model="leftTab" animated>
             <q-tab-panel name="history">
-              <trial-history/> 
+              <trial-history />
             </q-tab-panel>
 
             <q-tab-panel name="users">
@@ -46,9 +46,9 @@
 
           <q-separator />
 
-          <q-tab-panels v-model="rightTab" animated>
+          <q-tab-panels v-model="rightTab" keep-alive animated>
             <q-tab-panel name="trials">
-              <collection-trial />
+              <collection-trial :collection="collection" />
             </q-tab-panel>
 
             <q-tab-panel name="statistics">
@@ -93,6 +93,7 @@ export default {
   },
   mounted() {
     this.fetchCollection()
+    this.$root.$on('trial-saved', this.fetchCollection)
   },
   methods: {
     fetchCollection() {

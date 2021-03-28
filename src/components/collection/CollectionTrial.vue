@@ -17,7 +17,7 @@
               </template>
 
               <template v-slot:append>
-                <q-btn round dense flat icon="clear" @click="files = null" />
+                <q-btn round dense flat icon="clear" @click="clearTrial" />
               </template>
             </q-file>
             <q-btn class="col-2 q-ma-md" unelevated color="primary" label="proceed" @click="readAllFiles" />
@@ -28,7 +28,7 @@
 
     </div>
 
-    <div v-if="requestSubmitted || results.length">
+    <div>
       <div class="q-pa-md">
         <q-table
             title="Clone Analysis"
@@ -38,7 +38,7 @@
             :columns="tableColumns"
             color="primary"
             row-key="files"
-            :loading="isLoading"
+            :loading="requestSubmitted"
         >
           <template v-slot:loading>
             <q-inner-loading showing color="primary" />
@@ -53,13 +53,16 @@
                 label="Remove"
                 class="q-mx-sm"
                 no-caps
+                @click="results = results.filter((r) => selected.indexOf(r) === -1 )"
             />
 
             <q-btn
+                :disable="!results.length"
                 color="primary"
                 icon-right="archive"
                 label="Save"
                 no-caps
+                @click="saveTrialToCollection"
             />
 
 
@@ -90,7 +93,7 @@
           <template v-slot:body-cell-method2="props">
             <q-td :props="props">
               <div>
-                <q-badge  color="secondary" class="text-bold" :label="props.row.file2_method.name" />
+                <q-badge color="secondary" class="text-bold" :label="props.row.file2_method.name" />
               </div>
               <div class="my-table-details">
                 {{ `${props.row.file2} (line: ${props.row.file2_method.line_number})` }}
@@ -118,14 +121,19 @@
 </template>
 <script>
 import axios from 'axios';
-
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'CollectionTrial',
   components: {},
+  props: {
+    collection: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
-      isLoading: true,
       requestSubmitted: false,
       files: null,
       sourceCodes: [],
@@ -156,22 +164,15 @@ export default {
       ],
     }
   },
+  computed: {
+    ...mapGetters('db', ['getDB']),
+    ...mapGetters('auth', ['getUser'])
+  },
   methods: {
-    detectFileSimilarity() {
-      this.requestSubmitted = true;
-      axios.post(`${process.env.VUE_APP_BACKEND_API}/check/duplicates`, { files: this.sourceCodes })
-          .then((response) => {
-            if (response.status === 200) {
-              this.sourceCodes = [];
-              this.results = response.data.data;
-              this.isLoading = false;
-              this.requestSubmitted = false;
-            }
-          })
-          .catch((e) => {
-            this.requestSubmitted = false;
-            console.error(e);
-          });
+    clearTrial(){
+      this.files = null
+      this.results = []
+      this.selected = []
     },
     readAllFiles() {
       this.sourceCodes = [];
@@ -187,14 +188,52 @@ export default {
           );
 
           if (this.sourceCodes.length === fileCount) {
-            console.log('aise ekhane');
+            // console.log('aise ekhane');
             this.detectFileSimilarity();
           }
         };
         reader.readAsText(file);
       });
 
+    },
 
+    detectFileSimilarity() {
+      this.requestSubmitted = true;
+      axios.post(`${process.env.VUE_APP_BACKEND_API}/check/duplicates`, { files: this.sourceCodes })
+          .then((response) => {
+            if (response.status === 200) {
+              this.sourceCodes = [];
+              this.results = response.data.data;
+              this.requestSubmitted = false;
+            }
+          })
+          .catch((e) => {
+            this.requestSubmitted = false;
+            console.error(e);
+          });
+    },
+
+
+    saveTrialToCollection() {
+      const batch = this.getDB.batch()
+      const collectionRef = this.getDB.collection('collection').doc(this.collection.doc_id)
+          .collection('trials')
+
+      this.results.forEach((trial) => {
+        batch.set(collectionRef.doc(), {
+          user: this.getUser,
+          ...trial
+        })
+      })
+
+      batch.commit()
+          .then(() => {
+            this.clearTrial()
+            this.$root.$emit('trial-saved')
+          })
+          .catch((e) => {
+            alert('Failed to store trial: ' + e)
+          })
     }
   }
 }
