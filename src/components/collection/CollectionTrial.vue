@@ -32,6 +32,8 @@
       <div class="q-pa-md">
         <q-table
             title="Clone Analysis"
+            selection="multiple"
+            :selected.sync="selected"
             :data="results"
             :columns="tableColumns"
             color="primary"
@@ -44,20 +46,32 @@
 
           <template v-slot:top-right>
             <q-btn
+                :disable="!selected.length"
+                flat
+                color="warning"
+                icon-right="delete"
+                label="Remove"
+                class="q-mx-sm"
+                no-caps
+            />
+
+            <q-btn
                 color="primary"
                 icon-right="archive"
                 label="Save"
                 no-caps
             />
+
+
           </template>
 
           <template v-slot:body-cell-method1="props">
             <q-td :props="props">
               <div>
-                <q-badge color="purple" :label="props.row.file1_method.name" />
+                <q-badge color="secondary" class="text-bold" :label="props.row.file1_method.name" />
               </div>
               <div class="my-table-details">
-                {{ `${props.row.file1} (line: ${props.row.file1_method.line_number}))` }}
+                {{ `${props.row.file1} (line: ${props.row.file1_method.line_number})` }}
               </div>
             </q-td>
           </template>
@@ -65,7 +79,7 @@
           <template v-slot:body-cell-method2="props">
             <q-td :props="props">
               <div>
-                <q-badge color="purple" :label="props.row.file2_method.name" />
+                <q-badge outline color="secondary" class="text-bold" :label="props.row.file2_method.name" />
               </div>
               <div class="my-table-details">
                 {{ `${props.row.file2} (line: ${props.row.file2_method.line_number})` }}
@@ -76,7 +90,7 @@
           <template v-slot:body-cell-method2="props">
             <q-td :props="props">
               <div>
-                <q-badge color="purple" :label="props.row.file2_method.name" />
+                <q-badge  color="secondary" class="text-bold" :label="props.row.file2_method.name" />
               </div>
               <div class="my-table-details">
                 {{ `${props.row.file2} (line: ${props.row.file2_method.line_number})` }}
@@ -88,10 +102,10 @@
           <template v-slot:body-cell-type="props">
             <q-td :props="props">
               <div>
-                <q-badge color="purple" :label="props.row.type.name" />
+                <q-badge color="secondary" class="text-bold" :label="props.row.type.name" />
               </div>
               <div class="my-table-details">
-                {{ props.row.type.probability }}
+                {{ props.row.type.probability.slice(0, 5) }}
               </div>
             </q-td>
           </template>
@@ -116,6 +130,7 @@ export default {
       files: null,
       sourceCodes: [],
       results: [],
+      selected: [],
       search: '',
       tableColumns: [
         {
