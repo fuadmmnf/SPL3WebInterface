@@ -4,23 +4,59 @@
         grid
         :card-container-class="cardContainerClass"
         title="Authorized Users"
-        :data="collectionUsers"
+        :data="[collection.owner, ...collection.users]"
         :columns="columns"
         row-key="uid"
         hide-header
     >
 
+      <template v-slot:top-right>
+        <q-btn
+            color="primary"
+            icon="add"
+            no-caps
+            size="sm"
+            fab-mini
+            @click="isUserAddModalShowing = true"
+        />
+
+
+        <q-dialog v-model="isUserAddModalShowing">
+          <q-card style="width: 400px; max-width: 80vw;">
+            <q-card-section class="row items-center q-pb-none">
+              <div class="text-h6">Add Collaborator</div>
+              <q-space />
+              <q-btn icon="close" flat round dense v-close-popup />
+            </q-card-section>
+
+            <q-card-section class="q-pt-none">
+              <q-form
+                  @submit="addCollaborator"
+                  class="q-gutter-md"
+              >
+                <q-input label="email *"
+                         dense v-model="collaboratorForm.email" autofocus />
+                <q-btn label="Submit" type="submit" color="primary" />
+              </q-form>
+            </q-card-section>
+          </q-card>
+        </q-dialog>
+
+
+      </template>
+
+
       <template v-slot:item="props">
         <div class=" col-xs-12 col-sm-6 col-md-6">
           <q-card>
 
-            <q-card-section >
+            <q-card-section>
               <div class="row">
                 <div class="col-3">
-                  <img alt="user_icon" :src="props.row.photoURL" width="50" height="50">
+                  <img alt="user_icon" :src="props.row.photoURL" width="55" height="58">
                 </div>
                 <div class="col">
-                  <div>{{ props.row.displayName }}</div>
+                  <div>{{ props.row.displayName }} {{ !props.index ? '(owner)' : '' }}</div>
                   <div>{{ props.row.email }}</div>
                 </div>
               </div>
@@ -33,26 +69,32 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 
 export default {
   name: "CollectionUsers",
   props: {
-    collectionUsers: {
-      type: Array,
+    collection: {
+      type: Object,
       required: true
     }
   },
-  data () {
+  data() {
     return {
+      isUserAddModalShowing: false,
       columns: [
         { name: 'name', label: 'Name', field: 'displayName' },
         { name: 'email', label: 'Email', field: 'email' }
       ],
+      collaboratorForm: {
+        email: '',
+      }
     }
   },
 
   computed: {
-    cardContainerClass () {
+    ...mapGetters('db', ['getDB']),
+    cardContainerClass() {
       if (this.$q.screen.gt.xs) {
         return 'grid-masonry grid-masonry--' + (this.$q.screen.gt.sm ? '3' : '2')
       }
@@ -62,7 +104,43 @@ export default {
 
   },
   methods: {
+    addCollaborator() {
+      this.getDB.collection('users').where('email', this.collaboratorForm.email).get()
+          .then((querySnapshot) => {
+            if (querySnapshot.docs.length) {
+              const user = querySnapshot.docs[0].data()
+              this.getDB.collection('collections').doc(this.collection.doc_id)
+                  .update({
+                    users: [...this.collection.users, user]
+                  }).then(() => {
+                this.collection.users.push(user)
+                this.collaboratorForm.email = ''
+              }).catch((e) => {
+                alert('Failed to update collaborators: ' + e)
+              })
 
+
+              this.getDB.collection('usercollections').doc(user.uid).get()
+                  .then((doc) => {
+                    if (!doc.data().collections.find((c) => c.doc_id === this.collection.doc_id)) {
+                      this.getDB.collection('usercollections').doc(user.uid).set({
+                            user_uid: user.uid,
+                            collections: [...doc.data().collections, this.collection]
+                          }
+                      ).catch((e) => {
+                        alert('Failed to add collaborator: ' + e)
+                      })
+                    }
+                  })
+
+            } else {
+              alert('No user with mail: ' + this.collaboratorForm.email + ' registered')
+            }
+          }).catch((e) => {
+        alert('Failed to find user, ' + e)
+      })
+
+    }
   }
 }
 </script>
@@ -76,6 +154,7 @@ export default {
     > div
       &:nth-child(2n + 1)
         order: 1
+
       &:nth-child(2n)
         order: 2
 
@@ -84,12 +163,15 @@ export default {
       flex: 1 0 100% !important
       width: 0 !important
       order: 1
+
   &--3
     > div
       &:nth-child(3n + 1)
         order: 1
+
       &:nth-child(3n + 2)
         order: 2
+
       &:nth-child(3n)
         order: 3
 

@@ -10,7 +10,7 @@
 
           <q-tabs v-model="leftTab" class="text-teal" align="justify">
             <q-tab label="History" name="history" />
-            <q-tab label="Users" name="users" />
+            <q-tab label="Collaborators" name="collaborators" />
           </q-tabs>
 
           <q-separator />
@@ -20,8 +20,8 @@
               <trial-history :trials="collectionTrials" />
             </q-tab-panel>
 
-            <q-tab-panel name="users">
-              <collection-users :collection-users="[collection.owner, ...collection.users]" />
+            <q-tab-panel name="collaborators">
+              <collection-users :collection="collection" />
             </q-tab-panel>
           </q-tab-panels>
         </q-card>
@@ -111,7 +111,7 @@ export default {
     fetchCollectionTrials() {
       this.getDB.collection('collections').doc(this.$route.params.collection_id).collection('trials').get()
           .then((querySnapshot) => {
-            this.collectionTrials = !querySnapshot.docs.length? []: querySnapshot.docs.map((doc) => { return { doc_id: doc.id, ...doc.data() }})
+            this.collectionTrials = !querySnapshot.docs.length ? [] : querySnapshot.docs.map((doc) => { return { doc_id: doc.id, ...doc.data() }})
           })
           .catch((e) => {
             alert(e)
