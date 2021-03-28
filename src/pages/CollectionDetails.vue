@@ -17,7 +17,7 @@
 
           <q-tab-panels v-model="leftTab" animated>
             <q-tab-panel name="history">
-              The QCard component is a great way to display important pieces of grouped content.
+              <trial-history/> 
             </q-tab-panel>
 
             <q-tab-panel name="users">
@@ -70,10 +70,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import CollectionTrial from "../components/collection/CollectionTrial";
+import TrialHistory from "../components/collection/TrialHistory";
 
 export default {
   name: "CollectionDetails",
-  components: { CollectionTrial },
+  components: { TrialHistory, CollectionTrial },
   data() {
     return {
       leftTab: 'history',

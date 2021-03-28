@@ -13,14 +13,14 @@
                 style="width: 400px"
             >
               <template v-slot:before>
-                <q-icon class="q-mt-sm" name="code"/>
+                <q-icon class="q-mt-sm" name="code" />
               </template>
 
               <template v-slot:append>
-                <q-btn round dense flat icon="clear" @click="files = null"/>
+                <q-btn round dense flat icon="clear" @click="files = null" />
               </template>
             </q-file>
-            <q-btn class="col-2 q-ma-md" unelevated color="primary" label="proceed" @click="readAllFiles"/>
+            <q-btn class="col-2 q-ma-md" unelevated color="primary" label="proceed" @click="readAllFiles" />
           </div>
         </q-card-section>
       </q-card>
@@ -28,34 +28,123 @@
 
     </div>
 
-    <div  v-if="requestSubmitted || results.length">
-      <clone-table :loading="isLoading" :data="results"/>
+    <div v-if="requestSubmitted || results.length">
+      <div class="q-pa-md">
+        <q-table
+            title="Clone Analysis"
+            :data="results"
+            :columns="tableColumns"
+            color="primary"
+            row-key="files"
+            :loading="isLoading"
+        >
+          <template v-slot:loading>
+            <q-inner-loading showing color="primary" />
+          </template>
+
+          <template v-slot:top-right>
+            <q-btn
+                color="primary"
+                icon-right="archive"
+                label="Save"
+                no-caps
+            />
+          </template>
+
+          <template v-slot:body-cell-method1="props">
+            <q-td :props="props">
+              <div>
+                <q-badge color="purple" :label="props.row.file1_method.name" />
+              </div>
+              <div class="my-table-details">
+                {{ `${props.row.file1} (line: ${props.row.file1_method.line_number}))` }}
+              </div>
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-method2="props">
+            <q-td :props="props">
+              <div>
+                <q-badge color="purple" :label="props.row.file2_method.name" />
+              </div>
+              <div class="my-table-details">
+                {{ `${props.row.file2} (line: ${props.row.file2_method.line_number})` }}
+              </div>
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-method2="props">
+            <q-td :props="props">
+              <div>
+                <q-badge color="purple" :label="props.row.file2_method.name" />
+              </div>
+              <div class="my-table-details">
+                {{ `${props.row.file2} (line: ${props.row.file2_method.line_number})` }}
+              </div>
+            </q-td>
+          </template>
+
+
+          <template v-slot:body-cell-type="props">
+            <q-td :props="props">
+              <div>
+                <q-badge color="purple" :label="props.row.type.name" />
+              </div>
+              <div class="my-table-details">
+                {{ props.row.type.probability }}
+              </div>
+            </q-td>
+          </template>
+
+
+        </q-table>
+      </div>
     </div>
   </div>
 </template>
 <script>
 import axios from 'axios';
 
-import CloneTable from "@/components/CloneTable";
 
 export default {
   name: 'CollectionTrial',
-  components: {
-    'clone-table': CloneTable
-  },
+  components: {},
   data() {
     return {
       isLoading: true,
       requestSubmitted: false,
       files: null,
       sourceCodes: [],
-      results: []
+      results: [],
+      search: '',
+      tableColumns: [
+        {
+          name: 'method1',
+          required: true,
+          label: 'Method 1',
+          align: 'center',
+          field: row => row,
+        },
+        {
+          name: 'method2',
+          required: true,
+          label: 'Method 2',
+          align: 'center',
+          field: row => row,
+        },
+        // { name: 'file1', align: 'left', label: 'File-1', field: 'file1', sortable: true },
+        // { name: 'method1', align: 'left', label: 'Method-1', field: row => row.file1_method.name + "(line: " + row.file1_method.line_number + ")",  sortable: true },
+        // { name: 'file1', align: 'left', label: 'File-1', field: 'file1', sortable: true },
+        // { name: 'method2', align: 'left', label: 'Method-2', field: row => row.file2_method.name + "(line: " + row.file2_method.line_number + ")",  sortable: true },
+        // { name: 'probabilities', align: 'left', label: 'Clone Probability', field: row => row.probability.split('"').join(''), sortable: true },
+        { name: 'type', align: 'center', label: 'Clone Type', field: row => row, },
+      ],
     }
   },
   methods: {
     detectFileSimilarity() {
       this.requestSubmitted = true;
-      axios.post(`${process.env.VUE_APP_BACKEND_API}/check/duplicates`, {files: this.sourceCodes})
+      axios.post(`${process.env.VUE_APP_BACKEND_API}/check/duplicates`, { files: this.sourceCodes })
           .then((response) => {
             if (response.status === 200) {
               this.sourceCodes = [];
