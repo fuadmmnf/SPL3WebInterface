@@ -210,7 +210,10 @@ export default {
       const collectionRef = this.getDB.collection('collection').doc(this.collection.doc_id)
           .collection('trials')
 
+
+
       this.results.forEach((trial) => {
+        this.collection.stats[this.getUser.uid][parseInt(trial.type.name.split('-')[1] - 1)] ++
         const docRef = collectionRef.doc()
         batch.set(docRef, {
           doc_id: docRef.id,
@@ -218,6 +221,10 @@ export default {
           status: 'Pending',
           ...trial
         })
+      })
+
+      batch.update(this.getDB.collection('collection').doc(this.collection.doc_id), {
+        stats: this.collection.stats
       })
 
       batch.commit()

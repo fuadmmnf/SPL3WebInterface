@@ -113,7 +113,8 @@ export default {
           .then((result) => {
             this.getDB.collection('usercollections').doc(this.getUser.uid).set({
                   user_uid: this.getUser.uid,
-                  collections: [...this.usercollections, { doc_id: result.id, ...this.collectionForm }]
+                  collections: [...this.usercollections, { doc_id: result.id, ...this.collectionForm }],
+                  stats: {[this.getUser.uid]: [0, 0, 0, 0]}
                 }
             ).then(() => {
               this.usercollections.push({ doc_id: result.id, ...this.collectionForm })

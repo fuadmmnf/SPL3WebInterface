@@ -111,7 +111,8 @@ export default {
               const user = querySnapshot.docs[0].data()
               this.getDB.collection('collections').doc(this.collection.doc_id)
                   .update({
-                    users: [...this.collection.users, user]
+                    users: [...this.collection.users, user],
+                    stats: {...this.collection.stats, [user.uid]: [0, 0, 0, 0]}
                   }).then(() => {
                 this.collection.users.push(user)
                 this.collaboratorForm.email = ''
