@@ -215,7 +215,7 @@ export default {
         batch.set(docRef, {
           doc_id: docRef.id,
           user: this.getUser,
-          status: 'Unresolved',
+          status: 'Pending',
           ...trial
         })
       })

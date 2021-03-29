@@ -39,7 +39,7 @@
           >
             <q-tab name="trials" label="Trials" />
             <q-tab name="statistics" label="Statistics" />
-            <q-tab name="mentions" label="Mentions" />
+<!--            <q-tab name="mentions" label="Mentions" />-->
           </q-tabs>
 
           <q-separator />
@@ -50,13 +50,13 @@
             </q-tab-panel>
 
             <q-tab-panel name="statistics">
-              <collection-statistics />
+              <collection-statistics :collection="collection" />
             </q-tab-panel>
 
-            <q-tab-panel name="mentions">
-              <div class="text-h6">Mentions</div>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            </q-tab-panel>
+<!--            <q-tab-panel name="mentions">-->
+<!--              <div class="text-h6">Mentions</div>-->
+<!--              Lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--            </q-tab-panel>-->
           </q-tab-panels>
         </q-card>
       </div>
