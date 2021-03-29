@@ -8,7 +8,7 @@
             <div class="text-subtitle2">{{ collection.description }}</div>
           </q-card-section>
 
-          <q-tabs v-model="leftTab" class="text-teal" align="justify">
+          <q-tabs dense v-model="leftTab" class="text-teal" align="justify">
             <q-tab label="History" name="history" />
             <q-tab label="Collaborators" name="collaborators" />
           </q-tabs>
@@ -50,8 +50,7 @@
             </q-tab-panel>
 
             <q-tab-panel name="statistics">
-              <div class="text-h6">Statistics</div>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              <collection-statistics />
             </q-tab-panel>
 
             <q-tab-panel name="mentions">
@@ -70,10 +69,11 @@ import { mapGetters } from 'vuex'
 import CollectionTrial from "../components/collection/CollectionTrial";
 import TrialHistory from "../components/collection/TrialHistory";
 import CollectionUsers from "../components/collection/CollectionUsers";
+import CollectionStatistics from "../components/collection/CollectionStatistics";
 
 export default {
   name: "CollectionDetails",
-  components: { CollectionUsers, TrialHistory, CollectionTrial },
+  components: { CollectionStatistics, CollectionUsers, TrialHistory, CollectionTrial },
   data() {
     return {
       leftTab: 'history',
