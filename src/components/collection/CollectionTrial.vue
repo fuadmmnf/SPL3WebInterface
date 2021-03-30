@@ -211,9 +211,9 @@ export default {
           .collection('trials')
 
 
-
+      const tempStats = {...this.collection.stats}
       this.results.forEach((trial) => {
-        this.collection.stats[this.getUser.uid][parseInt(trial.type.name.split('-')[1] - 1)] ++
+        tempStats[this.getUser.uid][parseInt(trial.type.name.split('-')[1] - 1)] ++
         const docRef = collectionRef.doc()
         batch.set(docRef, {
           doc_id: docRef.id,
@@ -224,11 +224,12 @@ export default {
       })
 
       batch.update(this.getDB.collection('collection').doc(this.collection.doc_id), {
-        stats: this.collection.stats
+        stats: tempStats
       })
 
       batch.commit()
           .then(() => {
+            this.collection.stats = tempStats
             this.clearTrial()
             this.$root.$emit('trial-saved')
           })
