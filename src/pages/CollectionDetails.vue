@@ -84,6 +84,7 @@ export default {
         description: '',
         owner: null,
         users: [],
+        stats: {},
         trialCount: 0
       },
       collectionTrials: [],

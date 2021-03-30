@@ -84,7 +84,7 @@ export default {
           field: 'name',
           sortable: true
         },
-        { name: 'Description', align: 'center', label: 'Description', field: 'description', sortable: true },
+        { name: 'Description', align: 'center', label: 'Description', field: 'description'},
         { name: 'Owner', label: 'Owner', field: val => val.owner.displayName + ' (' + val.owner.email + ')', sortable: true },
       ],
       data: []

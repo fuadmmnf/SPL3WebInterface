@@ -12,7 +12,7 @@ import VueApexCharts from 'vue-apexcharts'
 
 const getTotalCloneCountByUser = (users) => {
   const countArr = [0, 0, 0, 0]
-  for (const key of Object.entries(users)) {
+  for (const [key] of Object.entries(users)) {
     countArr[0] += users[key][0]
     countArr[1] += users[key][1]
     countArr[2] += users[key][2]
@@ -25,26 +25,26 @@ const getUserCloneCountByType = (users) => {
   const cloneByUserData = [
     {
       name: 'Type 1',
-      data: 0
+      data: []
     },
     {
       name: 'Type 2',
-      data: 0
+      data: []
     },
     {
       name: 'Type 3',
-      data: 0
+      data: []
     },
     {
       name: 'Type 4',
-      data: 0
+      data: []
     }
   ]
-  for (const key of Object.entries(users)) {
-    cloneByUserData[0].data += users[key][0]
-    cloneByUserData[1].data += users[key][1]
-    cloneByUserData[2].data += users[key][2]
-    cloneByUserData[3].data += users[key][3]
+  for (const [key] of Object.entries(users)) {
+    cloneByUserData[0].data.push(users[key][0])
+    cloneByUserData[1].data.push(users[key][1])
+    cloneByUserData[2].data.push(users[key][2])
+    cloneByUserData[3].data.push(users[key][3])
   }
 
   return cloneByUserData
