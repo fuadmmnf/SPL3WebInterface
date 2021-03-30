@@ -72,7 +72,7 @@
           <template v-slot:body-cell-method1="props">
             <q-td :props="props">
               <div>
-                <q-badge color="secondary" class="text-bold" :label="props.row.file1_method.name" />
+                <q-badge outline color="secondary" class="text-bold" :label="props.row.file1_method.name" />
               </div>
               <div class="my-table-details">
                 {{ `${props.row.file1} (line: ${props.row.file1_method.line_number})` }}
@@ -92,11 +92,10 @@
           </template>
 
 
-
           <template v-slot:body-cell-type="props">
             <q-td :props="props">
               <div>
-                <q-badge color="secondary" class="text-bold" :label="props.row.type.name" />
+                <q-badge outline color="secondary" class="text-bold" :label="props.row.type.name" />
               </div>
               <div class="my-table-details">
                 {{ props.row.type.probability.slice(0, 5) }}
@@ -160,7 +159,7 @@ export default {
     ...mapGetters('auth', ['getUser'])
   },
   methods: {
-    clearTrial(){
+    clearTrial() {
       this.files = null
       this.results = []
       this.selected = []
@@ -207,23 +206,24 @@ export default {
 
     saveTrialToCollection() {
       const batch = this.getDB.batch()
-      const collectionRef = this.getDB.collection('collection').doc(this.collection.doc_id)
+      const collectionRef = this.getDB.collection('collections').doc(this.collection.doc_id)
           .collection('trials')
 
 
-      const tempStats = {...this.collection.stats}
+      const tempStats = { ...this.collection.stats }
       this.results.forEach((trial) => {
-        tempStats[this.getUser.uid][parseInt(trial.type.name.split('-')[1] - 1)] ++
-        const docRef = collectionRef.doc()
-        batch.set(docRef, {
-          doc_id: docRef.id,
-          user: this.getUser,
-          status: 'Pending',
-          ...trial
-        })
-      })
+            tempStats[this.getUser.uid][parseInt(trial.type.name.split('-')[1] - 1)]++
+            const docRef = collectionRef.doc()
+            batch.set(docRef, {
+              doc_id: docRef.id,
+              user: this.getUser,
+              status: 'Pending',
+              ...trial
+            })
+          }
+      )
 
-      batch.update(this.getDB.collection('collection').doc(this.collection.doc_id), {
+      batch.update(this.getDB.collection('collections').doc(this.collection.doc_id), {
         stats: tempStats
       })
 
@@ -231,7 +231,7 @@ export default {
           .then(() => {
             this.collection.stats = tempStats
             this.clearTrial()
-            this.$root.$emit('trial-saved')
+            this.$root.$emit('trial-saved', )
           })
           .catch((e) => {
             alert('Failed to store trial: ' + e)
