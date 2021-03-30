@@ -1,13 +1,54 @@
 <template>
   <div class="flex flex-center">
-    <vue-apex-charts class="q-mb-lg" width="380" type="donut" :options="chartOptions" :series="series2"></vue-apex-charts>
+    <vue-apex-charts class="q-mb-lg" width="380" type="donut" :options="donutOptions"
+                     :series="donutData"></vue-apex-charts>
     <!--    <vue-apex-charts width="500" type="bar" :options="options" :series="series"></vue-apex-charts>-->
-    <vue-apex-charts width="500" type="heatmap" :options="chartOptions3" :series="series3"></vue-apex-charts>
+    <vue-apex-charts width="500" type="heatmap" :options="heatmapOptions" :series="heatmapData"></vue-apex-charts>
   </div>
 </template>
 
 <script>
 import VueApexCharts from 'vue-apexcharts'
+
+const getTotalCloneCountByUser = (users) => {
+  const countArr = [0, 0, 0, 0]
+  for (const key of Object.entries(users)) {
+    countArr[0] += users[key][0]
+    countArr[1] += users[key][1]
+    countArr[2] += users[key][2]
+    countArr[3] += users[key][3]
+  }
+  return countArr
+}
+
+const getUserCloneCountByType = (users) => {
+  const cloneByUserData = [
+    {
+      name: 'Type 1',
+      data: 0
+    },
+    {
+      name: 'Type 2',
+      data: 0
+    },
+    {
+      name: 'Type 3',
+      data: 0
+    },
+    {
+      name: 'Type 4',
+      data: 0
+    }
+  ]
+  for (const key of Object.entries(users)) {
+    cloneByUserData[0].data += users[key][0]
+    cloneByUserData[1].data += users[key][1]
+    cloneByUserData[2].data += users[key][2]
+    cloneByUserData[3].data += users[key][3]
+  }
+
+  return cloneByUserData
+}
 
 export default {
   name: "CollectionStatistics",
@@ -22,19 +63,7 @@ export default {
   },
   data() {
     return {
-      options: {
-        chart: {
-          id: 'vuechart-example'
-        },
-        xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
-        }
-      },
-      series: [{
-        name: 'series-1',
-        data: [30, 40, 45, 50, 49, 60, 70, 91]
-      }],
-      chartOptions: {
+      donutOptions: {
         title: {
           text: 'Clone type percentage',
           align: 'center',
@@ -44,26 +73,10 @@ export default {
         },
         labels: ['Type 1', 'Type 2', 'Type 3', 'Type 4',]
       },
-      series2: [44, 55, 41, 17],
+      donutData: getTotalCloneCountByUser(this.collection.stats),
 
-      series3: [{
-        name: 'Type 1',
-        data: Array(this.collection.users.length + 1).fill(Math.floor(Math.random() * (91)))
-      },
-        {
-          name: 'Type 2',
-          data: Array(this.collection.users.length + 1).fill(Math.floor(Math.random() * (91)))
-        },
-        {
-          name: 'Type 3',
-          data: Array(this.collection.users.length + 1).fill(Math.floor(Math.random() * (91)))
-        },
-        {
-          name: 'Type 4',
-          data: Array(this.collection.users.length + 1).fill(Math.floor(Math.random() * (91)))
-        },
-      ],
-      chartOptions3: {
+      heatmapData: getUserCloneCountByType(this.collection.stats),
+      heatmapOptions: {
         chart: {
           height: 350,
           type: 'heatmap',
