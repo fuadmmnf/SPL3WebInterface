@@ -39,7 +39,7 @@
           >
             <q-tab name="trials" label="Trials" />
             <q-tab name="statistics" label="Statistics" />
-<!--            <q-tab name="mentions" label="Mentions" />-->
+            <!--            <q-tab name="mentions" label="Mentions" />-->
           </q-tabs>
 
           <q-separator />
@@ -53,10 +53,10 @@
               <collection-statistics :collection="collection" />
             </q-tab-panel>
 
-<!--            <q-tab-panel name="mentions">-->
-<!--              <div class="text-h6">Mentions</div>-->
-<!--              Lorem ipsum dolor sit amet consectetur adipisicing elit.-->
-<!--            </q-tab-panel>-->
+            <!--            <q-tab-panel name="mentions">-->
+            <!--              <div class="text-h6">Mentions</div>-->
+            <!--              Lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+            <!--            </q-tab-panel>-->
           </q-tab-panels>
         </q-card>
       </div>
@@ -96,6 +96,7 @@ export default {
   mounted() {
     this.fetchCollection()
     this.$root.$on('trial-saved', this.fetchCollectionTrials)
+    this.$root.$on('trial-status-changed', this.changeTrialStatus)
   },
   methods: {
     fetchCollection() {
@@ -117,8 +118,20 @@ export default {
           .catch((e) => {
             alert(e)
           })
+    },
+    changeTrialStatus(trial, status) {
+      this.getDB.collection('collections').doc(this.collection.doc_id).collection('trials').doc(trial.doc_id)
+          .update({
+            status: status
+          }).then(() => {
+        const idx = this.collectionTrials.indexOf(trial)
+        if (idx > -1) {
+          this.collectionTrials[idx].status = status
+        }
+      })
     }
-  }
+  },
+
 }
 </script>
 

@@ -53,9 +53,31 @@
     <template v-slot:body-cell-status="props">
       <q-td :props="props">
         <div>
-          <q-badge
-              :color="['warning', 'secondary', 'positive'][props.row.status === 'Pending'? 0: props.row.status === 'Working'? 1: 2]"
-              class="text-bold" :label="props.row.status" />
+          <div class="cursor-pointer">
+            <q-badge
+                :color="['warning', 'secondary', 'positive'][props.row.status === 'Pending'? 0: props.row.status === 'Working'? 1: 2]"
+                class="text-bold" :label="props.row.status" @click="trialStatus = props.row.status" />
+            <q-popup-edit :value="props.row.status">
+              <template v-slot="{ initialValue, value, emitValue, validate, set, cancel }">
+                <q-select
+                    v-model="trialStatus"
+                    :options="['Pending', 'Working', 'Resolved']"
+                    :value="props.row.status"
+                    hint="Clone Status"
+                >
+                  <template v-slot:after>
+                    <q-btn flat dense color="negative" icon="cancel" @click.stop="cancel" />
+                    <q-btn flat dense color="positive" icon="check_circle"
+                           @click.stop="(e) => {
+                             $root.$emit('trial-status-changed', props.row, trialStatus)
+                             cancel()
+                           }"
+                           :disable="props.row.status === trialStatus" />
+                  </template>
+                </q-select>
+              </template>
+            </q-popup-edit>
+          </div>
         </div>
       </q-td>
     </template>
@@ -74,6 +96,8 @@ export default {
   },
   data() {
     return {
+      trialStatus: '',
+
       expanded: [ // Array of row keys
         'Ice cream sandwich'
       ],
@@ -93,17 +117,12 @@ export default {
           align: 'center',
           field: row => row,
         },
-        // { name: 'file1', align: 'left', label: 'File-1', field: 'file1', sortable: true },
-        // { name: 'method1', align: 'left', label: 'Method-1', field: row => row.file1_method.name + "(line: " + row.file1_method.line_number + ")",  sortable: true },
-        // { name: 'file1', align: 'left', label: 'File-1', field: 'file1', sortable: true },
-        // { name: 'method2', align: 'left', label: 'Method-2', field: row => row.file2_method.name + "(line: " + row.file2_method.line_number + ")",  sortable: true },
-        // { name: 'probabilities', align: 'left', label: 'Clone Probability', field: row => row.probability.split('"').join(''), sortable: true },
-        { name: 'type', align: 'center', label: 'Clone Type', field: row => row, sortable: true},
-        { name: 'status', align: 'center', label: 'Status', field: row => row.status, sortable: true},
+        { name: 'type', align: 'center', label: 'Clone Type', field: row => row, sortable: true },
+        { name: 'status', align: 'center', label: 'Status', field: row => row.status, sortable: true },
       ],
 
     }
-  }
+  },
 }
 </script>
 
