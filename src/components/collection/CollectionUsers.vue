@@ -56,7 +56,7 @@
                   <img alt="user_icon" :src="props.row.photoURL" width="55" height="58">
                 </div>
                 <div class="col">
-                  <div>{{ props.row.displayName }} {{ !props.index ? '(owner)' : '' }}</div>
+                  <div>{{ props.row.displayName }} {{ !props.row.uid === collection.owner.uid ? '(owner)' : '' }}</div>
                   <div>{{ props.row.email }}</div>
                 </div>
               </div>
@@ -129,6 +129,7 @@ export default {
                         this.getDB.collection('usercollections').doc(user.uid).set({
                               user_uid: user.uid,
                               collections: [...doc.data().collections, {
+                                doc_id: this.collection.doc_id,
                                 name: this.collection.name,
                                 description: this.collection.description,
                                 owner: this.collection.owner,
@@ -144,6 +145,7 @@ export default {
                       this.getDB.collection('usercollections').doc(user.uid).set({
                             user_uid: user.uid,
                             collections: [{
+                              doc_id: this.collection.doc_id,
                               name: this.collection.name,
                               description: this.collection.description,
                               owner: this.collection.owner,
