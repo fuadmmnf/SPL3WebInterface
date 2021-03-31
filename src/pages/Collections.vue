@@ -63,7 +63,8 @@ const returnCollectionFormTemplate = () => {
     description: '',
     owner: null,
     users: [],
-    trialCount: 0
+    trialCount: 0,
+    stats: {}
   }
 }
 
@@ -109,12 +110,13 @@ export default {
           });
     },
     createCollection() {
+      this.collectionForm.stats = { [this.getUser.uid]: [0, 0, 0, 0] }
       this.getDB.collection('collections').add(this.collectionForm)
           .then((result) => {
             this.getDB.collection('usercollections').doc(this.getUser.uid).set({
                   user_uid: this.getUser.uid,
                   collections: [...this.usercollections, { doc_id: result.id, ...this.collectionForm }],
-                  stats: {[this.getUser.uid]: [0, 0, 0, 0]}
+                  // stats: {[this.getUser.uid]: [0, 0, 0, 0]}
                 }
             ).then(() => {
               this.usercollections.push({ doc_id: result.id, ...this.collectionForm })

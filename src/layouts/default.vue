@@ -69,7 +69,7 @@ export default {
             if (this.$route.name === 'detector') {
               this.$router.go(0)
             } else {
-              this.$router.replace('detector').catch(() => {});
+              this.$router.replace('/detector').catch(() => {});
             }
           });
 

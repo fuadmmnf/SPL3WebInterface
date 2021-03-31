@@ -105,16 +105,17 @@ export default {
   },
   methods: {
     addCollaborator() {
-      this.getDB.collection('users').where('email', this.collaboratorForm.email).get()
+      this.getDB.collection('users').where('email', '==', this.collaboratorForm.email).get()
           .then((querySnapshot) => {
             if (querySnapshot.docs.length) {
               const user = querySnapshot.docs[0].data()
               this.getDB.collection('collections').doc(this.collection.doc_id)
                   .update({
                     users: [...this.collection.users, user],
-                    stats: {...this.collection.stats, [user.uid]: [0, 0, 0, 0]}
+                    stats: { ...this.collection.stats, [user.uid]: [0, 0, 0, 0] }
                   }).then(() => {
                 this.collection.users.push(user)
+                this.isUserAddModalShowing = false
                 this.collaboratorForm.email = ''
               }).catch((e) => {
                 alert('Failed to update collaborators: ' + e)
@@ -123,15 +124,38 @@ export default {
 
               this.getDB.collection('usercollections').doc(user.uid).get()
                   .then((doc) => {
-                    if (!doc.data().collections.find((c) => c.doc_id === this.collection.doc_id)) {
+                    if (doc.exists) {
+                      if (!(doc.data()).collections.find((c) => c.doc_id === this.collection.doc_id)) {
+                        this.getDB.collection('usercollections').doc(user.uid).set({
+                              user_uid: user.uid,
+                              collections: [...doc.data().collections, {
+                                name: this.collection.name,
+                                description: this.collection.description,
+                                owner: this.collection.owner,
+                                trialCount: this.collection.trialCount
+                              }],
+                              // stats: { [user.uid]: [0, 0, 0, 0] }
+                            }
+                        ).catch((e) => {
+                          alert('Failed to add collaborator: ' + e)
+                        })
+                      }
+                    } else {
                       this.getDB.collection('usercollections').doc(user.uid).set({
                             user_uid: user.uid,
-                            collections: [...doc.data().collections, this.collection]
+                            collections: [{
+                              name: this.collection.name,
+                              description: this.collection.description,
+                              owner: this.collection.owner,
+                              trialCount: this.collection.trialCount
+                            }],
+                            // stats: { [this.getUser.uid]: [0, 0, 0, 0] }
                           }
                       ).catch((e) => {
                         alert('Failed to add collaborator: ' + e)
                       })
                     }
+
                   })
 
             } else {
