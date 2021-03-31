@@ -32,13 +32,14 @@
       <div class="q-pa-md">
         <q-table
             title="Clone Analysis"
-            selection="multiple"
-            :selected.sync="selected"
             :data="results"
             :columns="tableColumns"
             color="primary"
-            row-key="files"
+            row-key="id"
+            :selected-rows-label="getSelectedString"
             :loading="requestSubmitted"
+            selection="multiple"
+            :selected.sync="selected"
         >
           <template v-slot:loading>
             <q-inner-loading showing color="primary" />
@@ -156,13 +157,17 @@ export default {
   },
   computed: {
     ...mapGetters('db', ['getDB']),
-    ...mapGetters('auth', ['getUser'])
+    ...mapGetters('auth', ['getUser']),
+
   },
   methods: {
     clearTrial() {
       this.files = null
       this.results = []
       this.selected = []
+    },
+    getSelectedString () {
+      return this.selected.length === 0 ? '' : `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.results.length}`
     },
     readAllFiles() {
       this.sourceCodes = [];

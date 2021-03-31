@@ -1,7 +1,10 @@
 <template>
   <div class="q-mt-md q-px-sm">
-    <div class="row">
-      <div class="col q-px-sm">
+    <q-splitter
+        v-model="splitterModel"
+        :limits="[50, 70]"
+    >
+      <template v-slot:before>
         <q-card class="my-card">
           <q-card-section>
             <div class="text-h6">{{ collection.name }}</div>
@@ -25,8 +28,8 @@
             </q-tab-panel>
           </q-tab-panels>
         </q-card>
-      </div>
-      <div class="col q-px-sm">
+      </template>
+      <template v-slot:after>
         <q-card>
           <q-tabs
               v-model="rightTab"
@@ -59,8 +62,8 @@
             <!--            </q-tab-panel>-->
           </q-tab-panels>
         </q-card>
-      </div>
-    </div>
+      </template>
+    </q-splitter>
   </div>
 </template>
 
@@ -76,6 +79,7 @@ export default {
   components: { CollectionStatistics, CollectionUsers, TrialHistory, CollectionTrial },
   data() {
     return {
+      splitterModel: 50,
       leftTab: 'history',
       rightTab: 'trials',
       collection: {
