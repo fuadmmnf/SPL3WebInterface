@@ -17,10 +17,10 @@
               </template>
 
               <template v-slot:append>
-                <q-btn round dense flat icon="clear" @click="files = null"/>
+                <q-btn  round dense flat icon="clear" @click="files = null"/>
               </template>
             </q-file>
-            <q-btn class="col-2 q-ma-md" unelevated color="primary" label="proceed" @click="readAllFiles"/>
+            <q-btn :disable="requestSubmitted" class="col-2 q-ma-md" unelevated color="primary" label="proceed" @click="readAllFiles"/>
           </div>
         </q-card-section>
       </q-card>
@@ -29,7 +29,7 @@
     </div>
 
     <div  v-if="requestSubmitted || results.length">
-          <clone-table :loading="isLoading" :data="results"/>
+          <clone-table :loading="isLoading || requestSubmitted" :data="results"/>
     </div>
   </div>
 </template>
@@ -66,9 +66,12 @@ export default {
           .catch((e) => {
             this.requestSubmitted = false;
             console.error(e);
+            alert('Source File not valid')
           });
     },
     readAllFiles() {
+      this.loading = true
+      this.results = []
       this.sourceCodes = [];
       let fileCount = this.files.length;
       this.files.forEach((file) => {
@@ -82,7 +85,6 @@ export default {
           );
 
           if (this.sourceCodes.length === fileCount) {
-            console.log('aise ekhane');
             this.detectFileSimilarity();
           }
         };

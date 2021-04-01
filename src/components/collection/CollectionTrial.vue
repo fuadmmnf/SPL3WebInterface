@@ -17,10 +17,10 @@
               </template>
 
               <template v-slot:append>
-                <q-btn round dense flat icon="clear" @click="clearTrial" />
+                <q-btn  round dense flat icon="clear" @click="clearTrial" />
               </template>
             </q-file>
-            <q-btn class="col-2 q-ma-md" unelevated color="primary" label="proceed" @click="readAllFiles" />
+            <q-btn :disable="requestSubmitted" class="col-2 q-ma-md" unelevated color="primary" label="proceed" @click="readAllFiles" />
           </div>
         </q-card-section>
       </q-card>
@@ -170,6 +170,8 @@ export default {
       return this.selected.length === 0 ? '' : `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.results.length}`
     },
     readAllFiles() {
+      this.loading = true
+      this.results = []
       this.sourceCodes = [];
       let fileCount = this.files.length;
       this.files.forEach((file) => {
@@ -183,7 +185,7 @@ export default {
           );
 
           if (this.sourceCodes.length === fileCount) {
-            // console.log('aise ekhane');
+
             this.detectFileSimilarity();
           }
         };
@@ -205,6 +207,8 @@ export default {
           .catch((e) => {
             this.requestSubmitted = false;
             console.error(e);
+            alert('Source File not valid')
+
           });
     },
 
