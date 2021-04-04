@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="row justify-center q-ma-md">
+
       <q-card class="my-card">
         <q-card-section>
           <div class="row">

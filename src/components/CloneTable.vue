@@ -25,11 +25,12 @@ export default {
       tableRows: this.data,
       tableColumns: [
         {
-          name: 'files',
+          name: 'file1',
           required: true,
-          label: 'Files',
+          sortable: true,
+          label: 'File 1',
           align: 'left',
-          field: row => row.file1 + " " + row.file2,
+          field: row => row.file1,
         },
         // { name: 'file1', align: 'left', label: 'File-1', field: 'file1', sortable: true },
         {
@@ -39,7 +40,14 @@ export default {
           field: row => row.file1_method.name + "(line: " + row.file1_method.line_number + ")",
           sortable: true
         },
-        // { name: 'file1', align: 'left', label: 'File-1', field: 'file1', sortable: true },
+        {
+          name: 'file2',
+          required: true,
+          sortable: true,
+          label: 'File 2',
+          align: 'left',
+          field: row => row.file2,
+        },
         {
           name: 'method2',
           align: 'left',
@@ -53,6 +61,12 @@ export default {
           align: 'left',
           label: 'Clone Type',
           field: row => `${row.type.name} ${row.type.probability.slice(0, 4)}`
+        },
+        {
+          name: 'probability',
+          align: 'left',
+          label: 'Clone Probability',
+          field: row => row.type.probability.slice(0, 4)
         },
       ],
     }
